@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <h1>Her kan du se alle persons i read-only format (opgave 1 client side)</h1>
+
+        <div id="box">
+
+        </div>
+        <button id="knap">Klik her for refresh</button>
+
+        <br><br><br><br><br><br>
+        <h3>Brug denne form til at lave personer</h3>
+        <form id="createForm">
+            <input type="text" id="fNameField" value="fName">
+            <input type="text" id="lNameField" value="lName">
+            <input type="text" id="phoneField" value="phone">        
+            <button id="formKnap">CREATE NEW PERSON</button>
+        </form>
+        <h1>Har valgt at springe let og elefant henover de sidste to opgaver da det er boilerplate gentagelse resten af settet (seriøst, det handler om at ændre "POST" til "DELETE" and thats about it) (for real hvem er det der laver opgaver der består af 95% boilerplate kode?). Det er anden uge i træk at more or less HELE opgavesættet har været en øvelse i gentagelse</h1>
+
+        <script>
+            $(document).ready(function ()
+            {
+                var popTables = function ()
+                {
+                    var xmlhttp = new XMLHttpRequest();
+                    var url = "http://localhost:8084/ExercisesREST_JAX-RS_MANDAG_PART2/api/person";
+                    xmlhttp.onreadystatechange = function ()
+                    {
+                        
+                        var myPersons = [];
+                        console.log("state change er sket!");
+                        var myPersons = JSON.parse(xmlhttp.responseText);
+                        console.log("her er persons " + myPersons[3].fName);
+                        htmlString = "<table>";
+                        for (i = 0; i < myPersons.length; i++)
+                        {
+
+                            var john = "<tr><td>" + myPersons[i].fName + "</td><td>" + myPersons[i].lName + "</td><td>" + myPersons[i].phone + "</td></tr>";
+                            
+                            htmlString = htmlString.concat(john);
+                        }
+                        htmlString = htmlString.concat("</table>");
+                        $("#box").html(htmlString);
+                    };
+                    xmlhttp.open("GET", url, true);
+                    xmlhttp.send();
+                };
+                popTables();
+
+                var updater = function ()
+                {
+                    popTables();
+                };
+
+                $("#knap").click(function ()
+                {
+                    updater();
+                });
+////////////////////////////////////////////////////////
+
+                var creator = function ()
+                {
+                    var ffName = $("#fNameField").val();
+                    var llName = $("#lNameField").val();
+                    var pphone = $("#phoneField").val();
+                    var person =
+                            {
+                                fName: ffName,
+                                lName: llName,
+                                phone: pphone
+                            };
+                    var xmlhttp = new XMLHttpRequest();
+                    var url = "http://localhost:8084/ExercisesREST_JAX-RS_MANDAG_PART2/api/person";
+                    xmlhttp.open("POST", url, true);
+                    xmlhttp.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+                    xmlhttp.send(JSON.stringify(person));
+                    xmlhttp.onreadystatechange = function ()
+                    {
+                        updater();
+                    };
+                };
+
+                $("#formKnap").click(function ()
+                {
+                    $("#createForm").submit(function (e)
+                    {
+                        e.preventDefault();
+                    });
+                    creator();
+                    updater();
+                });
+            });
+
+
+        </script>
+    </body>
+</html>
